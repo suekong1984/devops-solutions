@@ -1,0 +1,15 @@
+desc: This stack creates a Kafka cluster using VMs
+release: 0.0.1
+categories: 
+   - message_queue
+   - kafka
+   - ansible
+tags:
+   - ansible
+   - kafka
+   - vms
+   - infrastructure
+   - featured_infrastructure
+   - featured
+   - cloud
+   - public_cloud

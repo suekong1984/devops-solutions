@@ -1,0 +1,18 @@
+desc: The stack that creates a MongoDB using Virtual Machines
+release: 0.0.1
+categories: 
+   - database
+   - mongodb
+   - replica
+   - ansible
+tags:
+   - ansible
+   - mongodb
+   - replica
+   - vms
+   - database
+   - infrastructure
+   - featured_infrastructure
+   - featured
+   - cloud
+   - public_cloud
