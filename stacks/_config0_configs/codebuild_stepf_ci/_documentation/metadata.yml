@@ -1,0 +1,12 @@
+desc: The stack creates the step function to connect codebuild ci lambda funcs
+release: 0.0.1
+categories: 
+   - aws
+   - cloud
+   - public_cloud
+tags:
+   - cloudwatch
+   - codebuild
+   - aws
+   - lambda
+   - step_func

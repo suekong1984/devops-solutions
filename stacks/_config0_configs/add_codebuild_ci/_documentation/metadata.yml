@@ -1,0 +1,16 @@
+desc: This stack adds a repository to an existing Codebuild CI 
+release: 0.0.1
+categories: 
+   - ci
+   - cd
+   - build
+tags:
+   - build
+   - ci
+   - cd
+   - infrastructure
+   - featured_infrastructure
+   - codebuild
+   - aws
+   - cloud
+   - public_cloud

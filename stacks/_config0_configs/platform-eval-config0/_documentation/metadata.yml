@@ -1,0 +1,13 @@
+desc: This is simply a platform for digital ocean.  
+release: 0.0.1
+categories: 
+   - ci
+   - cd
+   - build
+tags:
+   - build
+   - infrastructure
+   - featured_infrastructure
+   - do
+   - platform
+   - public_cloud

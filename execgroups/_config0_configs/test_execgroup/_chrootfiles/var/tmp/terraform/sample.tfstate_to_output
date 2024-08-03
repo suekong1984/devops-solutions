@@ -1,0 +1,96 @@
+#!/usr/bin/env python
+
+import os
+import json
+from config0_publisher.resource.manage import to_jsonfile
+from config0_publisher.serialization import b64_encode
+from config0_publisher.serialization import b64_decode
+from config0_publisher.utilities import print_json
+
+# set variables
+terraform_type = os.environ["TERRAFORM_TYPE"]
+
+resource_type = os.environ["RESOURCE_TYPE"]
+provider = os.environ["PROVIDER"]
+
+tf_exec_state_file = os.environ.get("TF_EXEC_STATE_FILE","terraform.tfstate")
+tf_exec_include_raw = os.environ.get("TF_EXEC_INCLUDE_RAW")
+tf_exec_resource_keys = os.environ.get("TF_EXEC_RESOURCE_KEYS")
+
+# this our values pass down into resource values directly
+# think of add custom keys and values
+resource_values_hash = os.environ.get("RESOURCE_VALUES_HASH")
+resource_labels_hash = os.environ.get("RESOURCE_LABELS_HASH")
+
+# read output file
+with open(tf_exec_state_file) as json_file:
+    data = json.load(json_file)
+
+if not data:
+    print("ERROR - there is no data from {}".format(os.path.join(os.getcwd(),
+                                                    tf_exec_state_file)))
+    exit(9)
+
+values = { "terraform_type":terraform_type,
+           "main":True,
+           "resource_type":resource_type,
+           "provider":provider }
+
+# add values to the resource explicity
+if resource_values_hash:
+    try:
+        _values = dict(b64_decode(resource_values_hash))
+    except:
+        _values = None
+
+if _values:
+    values = dict(values,**_values)
+
+# add labels to the resource explicity
+if resource_labels_hash:
+    try:
+        _values = dict(b64_decode(resource_labels_hash))
+    except:
+        _values = None
+
+if _values:
+    values = dict(values,**_values)
+
+if tf_exec_resource_keys and tf_exec_resource_keys != "all":
+    try:
+        tf_exec_resource_keys = list(tf_exec_resource_keys.split(","))
+    except:
+        tf_exec_resource_keys = None
+
+for k,v in data.get("outputs").items():
+    values[k] = v['value']
+
+# include raw with fresh read
+if tf_exec_include_raw:
+
+    with open(tf_exec_state_file) as json_file:
+        raw = json.load(json_file)
+
+    values["raw"] = {"terraform":b64_encode(raw)}
+
+if os.environ.get("AWS_DEFAULT_REGION"): 
+    values["region"] = os.environ["AWS_DEFAULT_REGION"]
+    values["aws_default_region"] = os.environ["AWS_DEFAULT_REGION"]
+
+for resource in data["resources"]:
+
+    for instance in resource["instances"]:
+
+        if resource["type"] != terraform_type:
+            continue
+
+        for _key,_value in resource["instances"][0]["attributes"].items():
+            if tf_exec_resource_keys == "all" or _key in tf_exec_resource_keys:
+                values[_key] = _value
+
+        break
+
+# ref 34532045732
+#print_json(values)
+#return values
+to_jsonfile(values,"{}.json".format(terraform_type))
